@@ -41,6 +41,12 @@ csv.eachEntry({
 
   delimiter: ',',
 
+  // specify input CSV file encoding
+  encoding: 'utf-8',
+
+  // use same encoding, or a specific one for the first line
+  firstLineEncoding: 'auto',
+
   // if true: " line " => "line"
   trimLine: false,
 
@@ -84,7 +90,6 @@ csv.eachEntry({
 
 ## Running tests
 ```sh
-$ npm install --only=dev
-$ npm install mocha // or npm install -g mocha
+$ npm install
 $ npm test
 ```
