@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/ezeeworld/npm-csv-ew.git"
   },
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "CSV reading library",
   "scripts": {
     "prepublish": "bin/prepublish",

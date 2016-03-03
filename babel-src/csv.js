@@ -2,7 +2,11 @@
 
 const readline = require('readline');
 const iconv = require('iconv-lite');
-const fs = require('fs');
+var fs = require('fs');
+fs = {
+    createReadStream: fs.createReadStream,
+    readFile: promisify(fs.readFile),
+};
 const _ = require('lodash');
 
 const defaultOptions = {
@@ -30,7 +34,49 @@ function new_(mainOptions) {
     _.defaultsDeep(mainOptions, defaultOptions);
     return _.assign(new_.bind(), {
         eachEntry: eachEntry,
+        fromJson: fromJson,
     });
+
+    function fromJson(options) {
+        options = _.clone(options || {});
+        _.defaultsDeep(options, mainOptions);
+        requireOptions(options, [
+            'input',
+            'columnNames',
+            'delimiter',
+        ]);
+        const inputType = typeof options.input;
+        var output = '';
+        if (inputType === 'string') {
+            var inputPromise = fs.readFile(options.input)
+            .then(content => JSON.parse(content));
+        } else {
+            inputPromise = Promise.resolve(options.input);
+        }
+        var columnNames = [];
+        return inputPromise.then(function(jsonArray) {
+            if (options.columnNames === 'auto') {
+                jsonArray.forEach(function(item) {
+                    for (var key in item) {
+                        if (!_.includes(columnNames, key)) {
+                            columnNames.push(key);
+                        }
+                    }
+                });
+            } else {
+                columnNames = options.columnNames;
+            }
+            jsonArray.forEach(function(item) {
+                var csvLine = '';
+                columnNames.forEach(function(columnName) {
+                    csvLine += '' + item[columnName] + options.delimiter;
+                });
+                output += csvLine.substr(0, csvLine.length - options.delimiter.length) + '\n';
+            });
+        }).then(function() {
+            return `${columnNames.join(options.delimiter)}\n${output}`;
+        });
+    }
 
     function eachEntry(options) {
         options = _.cloneDeep(options || {});
@@ -221,4 +267,14 @@ function splitLine(line, delimiter, handleQuotes) {
 
 function wrapIterator(iterator) {
     return record => new Promise((resolve, reject) => resolve(iterator(record)));
+}
+
+function promisify(toPromisify) {
+    return function() {
+        const args = Array.prototype.slice.call(arguments);
+        return new Promise((resolve, reject) => {
+            args.push((err, result) => err ? reject(err) : resolve(result));
+            toPromisify.apply(this, args);
+        });
+    };
 }

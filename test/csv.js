@@ -3,6 +3,7 @@
 var assert = require('assert');
 var _ = require('lodash');
 var csvModule = require('../src/built/csv');
+var fs = require('fs');
 var csv = csvModule({
     filename: __dirname + '/test-data.csv',
     raiseOnEmptyLines: false,
@@ -22,6 +23,22 @@ describe('module csv', function() {
             assert.strictEqual(typeof csvModule, 'function');
             assert.strictEqual(typeof csv, 'function');
             assert.strictEqual(typeof csv.eachEntry, 'function');
+        });
+    });
+    describe('fromJson', function() {
+        it('should return json content converted to csv', function(done) {
+            csv.fromJson({
+                input: __dirname + '/test.json',
+                columnNames: [ 'a', 'c' ],
+            })
+            .then(function(result) {
+                assert.strictEqual(result, `a,c
+c,undefined
+e,undefined
+`);
+                done();
+            })
+            .catch(done);
         });
     });
     describe('eachEntry', function() {

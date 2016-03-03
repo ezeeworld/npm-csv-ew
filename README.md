@@ -88,6 +88,26 @@ csv.eachEntry({
 .catch(console.error);
 ```
 
+### Converting JSON to CSV
+Only few options are available for now.
+```js
+csv.fromJson({
+
+  // MANDATORY FIELDS
+
+  // file name string or parsed JSON
+  input: __dirname + '/test.json',
+
+  // OPTIONAL FIELDS and their default values
+
+  // find from all json items, or specify an array
+  columnNames: 'auto',
+
+})
+.then(resultCsv => console.log(resultCsv))
+.catch(console.error);
+```
+
 ## Running tests
 ```sh
 $ npm install
