@@ -11,6 +11,7 @@ const _ = require('lodash');
 
 const defaultOptions = {
     delimiter: ',',
+    headerDelimiter: 'auto',
     trimLine: false,
     trimColumns: false,
     raiseOnEmptyLines: true,
@@ -85,6 +86,7 @@ function new_(mainOptions) {
             'filename',
             'iterator',
             'delimiter',
+            'headerDelimiter',
             'trimLine',
             'trimColumns',
             'raiseOnEmptyLines',
@@ -164,7 +166,8 @@ function new_(mainOptions) {
                 if (options.returnLines) {
                     return _iterator(line).then(onLineCompleted, reject);
                 }
-                var lineSplit = splitLine(line, options.delimiter, options.handleQuotes);
+                var delimiter = lineNumber !== 1 || options.headerDelimiter === 'auto' ? options.delimiter : options.headerDelimiter;
+                var lineSplit = splitLine(line, delimiter, options.handleQuotes);
                 if (options.trimColumns) {
                     lineSplit = lineSplit.map(function(column) {
                         return column.trim();

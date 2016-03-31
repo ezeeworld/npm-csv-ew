@@ -41,6 +41,9 @@ csv.eachEntry({
 
   delimiter: ',',
 
+  // specify the column names delimiter, or use the same one
+  headerDelimiter: 'auto',
+
   // specify input CSV file encoding
   encoding: 'utf-8',
 
