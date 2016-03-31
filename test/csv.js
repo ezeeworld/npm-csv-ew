@@ -446,7 +446,6 @@ e,undefined
                     filename: __dirname + '/test-header-delimiter.csv',
                     iterator: function(record) {
                         return new Promise(function(resolve, reject) {
-                            console.dir(record);
                             assert.strictEqual(record.Column2, 'value2');
                             return resolve();
                         });

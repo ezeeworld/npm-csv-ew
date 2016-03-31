@@ -167,6 +167,14 @@ function new_(mainOptions) {
                     return _iterator(line).then(onLineCompleted, reject);
                 }
                 var delimiter = lineNumber !== 1 || options.headerDelimiter === 'auto' ? options.delimiter : options.headerDelimiter;
+                if (lineNumber === 1) {
+                    if (line.indexOf(delimiter) === 0) {
+                        line = line.substr(delimiter.length);
+                    }
+                    if (line.lastIndexOf(delimiter) === line.length - delimiter.length) {
+                        line = line.substr(0, line.length - delimiter.length);
+                    }
+                }
                 var lineSplit = splitLine(line, delimiter, options.handleQuotes);
                 if (options.trimColumns) {
                     lineSplit = lineSplit.map(function(column) {
